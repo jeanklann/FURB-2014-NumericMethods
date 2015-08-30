@@ -315,5 +315,13 @@ namespace FractionedNumber{
             else if (n1>n2) return 1;
             return 0;
         }
+
+		public Number Sqrt(int iterations){
+			Number res = 2;
+			for(int i = 0; i < iterations; i++) {
+				res -= (((res * res) - this) / (res * 2));
+			}
+			return res;
+		}
     }
 }
