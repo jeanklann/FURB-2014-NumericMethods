@@ -20,10 +20,10 @@ namespace FractionedNumber {
             file.WriteLine(result);
             file.Close();
         }
-        public static Number calculateBisectEquation(Number[] list, Number error){
+        public static FractionedNumber calculateBisectEquation(FractionedNumber[] list, FractionedNumber error){
             return calculateBisectEquation(list,error,-10000,10000);
         }
-        public static Number calculateBisectEquation(Number[] list, Number error, BigInteger begin, BigInteger end) {
+        public static FractionedNumber calculateBisectEquation(FractionedNumber[] list, FractionedNumber error, Number begin, Number end) {
             BisectTablePart lastTable = null;
             lastTable = calculateBisectEquationBisectTablePart(list, lastTable, begin, end);
             result += "Intervalo entre "+lastTable.BisectInterval.Begin;
@@ -39,9 +39,9 @@ namespace FractionedNumber {
             result += "Resultado: "+lastTable.BisectInterval.Average;
             return lastTable.BisectInterval.Average;
         }
-        public static string calculateInterval(Number[] list, BigInteger begin, BigInteger end) {
+        public static string calculateInterval(FractionedNumber[] list, Number begin, Number end) {
             string res = "";
-            BigInteger begin2 = begin;
+            Number begin2 = begin;
             while(begin2 < end - 1) {
                 BisectInterval bi = calculateBisectEquationBisectIntervals(list, begin2, end);
                 begin2 = ((int) bi.End);
@@ -53,49 +53,49 @@ namespace FractionedNumber {
             }
             return res;
         }
-        public static string calculateIntervalExtended(Number[] list, BigInteger begin, BigInteger end) {
+        public static string calculateIntervalExtended(FractionedNumber[] list, Number begin, Number end) {
             string res = "";
-            for(BigInteger i = begin;i < end;i++) {
+            for(Number i = begin;i < end;i++) {
                 res += i + ": \t";
-                res += calculateEquationPart(list, new Number(i));
+                res += calculateEquationPart(list, new FractionedNumber(i));
                 res += "\n";
             }
             return res;
         }
-        private static BisectInterval calculateBisectEquationBisectIntervals(Number[] list, BigInteger begin, BigInteger end) {
+        private static BisectInterval calculateBisectEquationBisectIntervals(FractionedNumber[] list, Number begin, Number end) {
             BisectInterval BisectInterval = new BisectInterval();
-            BisectInterval.Begin = new Number(begin);
-            BisectInterval.End = new Number(end);
+            BisectInterval.Begin = new FractionedNumber(begin);
+            BisectInterval.End = new FractionedNumber(end);
 
-            Number tmp = calculateEquationPart(list, new Number(begin));
+            FractionedNumber tmp = calculateEquationPart(list, new FractionedNumber(begin));
             if(tmp.Numerator == 0) {
-                BisectInterval.Begin = new Number(begin);
-                BisectInterval.End = new Number(end);
+                BisectInterval.Begin = new FractionedNumber(begin);
+                BisectInterval.End = new FractionedNumber(end);
             } else if(tmp.Numerator < 0) {
-                for(BigInteger i = begin + 1;i < end;i++) {
-                    Number n = calculateEquationPart(list, new Number(i));
+                for(Number i = begin + 1;i < end;i++) {
+                    FractionedNumber n = calculateEquationPart(list, new FractionedNumber(i));
                     if(n.Numerator < 0) {
-                        BisectInterval.Begin = new Number(i);
+                        BisectInterval.Begin = new FractionedNumber(i);
                     } else if(n.Numerator == 0) {
-                        BisectInterval.Begin = new Number(i);
-                        BisectInterval.End = new Number(i);
+                        BisectInterval.Begin = new FractionedNumber(i);
+                        BisectInterval.End = new FractionedNumber(i);
                         break;
                     } else {
-                        BisectInterval.End = new Number(i);
+                        BisectInterval.End = new FractionedNumber(i);
                         break;
                     }
                 }
             } else {
-                for(BigInteger i = begin+1;i < end;i++) {
-                    Number n = calculateEquationPart(list, new Number(i));
+                for(Number i = begin+1;i < end;i++) {
+                    FractionedNumber n = calculateEquationPart(list, new FractionedNumber(i));
                     if(n.Numerator > 0) {
-                        BisectInterval.Begin = new Number(i);
+                        BisectInterval.Begin = new FractionedNumber(i);
                     } else if(n.Numerator == 0) {
-                        BisectInterval.Begin = new Number(i);
-                        BisectInterval.End = new Number(i);
+                        BisectInterval.Begin = new FractionedNumber(i);
+                        BisectInterval.End = new FractionedNumber(i);
                         break;
                     } else {
-                        BisectInterval.End = new Number(i);
+                        BisectInterval.End = new FractionedNumber(i);
                         break;
                     }
                 }
@@ -103,7 +103,7 @@ namespace FractionedNumber {
 
             return BisectInterval;
         }
-        private static BisectTablePart calculateBisectEquationBisectTablePart(Number[] list, BisectTablePart lastTable, BigInteger begin, BigInteger end) {
+        private static BisectTablePart calculateBisectEquationBisectTablePart(FractionedNumber[] list, BisectTablePart lastTable, Number begin, Number end) {
             BisectTablePart table = new BisectTablePart();
             if(lastTable != null) {
                 if(lastTable.ResInterval.Begin.Numerator * lastTable.ResInterval.Average.Numerator < 0) {
@@ -126,7 +126,7 @@ namespace FractionedNumber {
             table.ResInterval.Average = calculateEquationPart(list, table.BisectInterval.Average);
             if(lastTable != null) {
                 if(table.BisectInterval.Average.Numerator == 0)
-                    table.Error = new Number(0);
+                    table.Error = new FractionedNumber(0);
                 else
                     table.Error =  (( table.BisectInterval.Average -  lastTable.BisectInterval.Average) /  table.BisectInterval.Average);
                 if(table.Error.Numerator < 0)
@@ -134,10 +134,10 @@ namespace FractionedNumber {
             }
             return table;
         }
-        private static Number calculateEquationPart(Number[] list, Number number) {
-            Number res = new Number(0);
+        private static FractionedNumber calculateEquationPart(FractionedNumber[] list, FractionedNumber number) {
+            FractionedNumber res = new FractionedNumber(0);
             for(int i = 0;i < list.Length;i++) {
-                Number resTemp = new Number(1);
+                FractionedNumber resTemp = new FractionedNumber(1);
                 for(int j = 0;j < i;j++) {
                     resTemp *= number;
                 }
@@ -146,12 +146,12 @@ namespace FractionedNumber {
             }
             return res;
         }
-        public static Number calculateNewtonEquation(Number[] list, Number error) {
+        public static FractionedNumber calculateNewtonEquation(FractionedNumber[] list, FractionedNumber error) {
             return calculateNewtonEquation(list, error, -10000, 10000);
         }
-        public static Number calculateNewtonEquation(Number[] list, Number error, BigInteger begin, BigInteger end) {
+        public static FractionedNumber calculateNewtonEquation(FractionedNumber[] list, FractionedNumber error, Number begin, Number end) {
             NewtonTablePart lastTable = null;
-            Number[] list2 = calculateNewtonList2(list);
+            FractionedNumber[] list2 = calculateNewtonList2(list);
             
             lastTable = calculateNewtonEquationTablePart(list, list2, lastTable, begin, end);
             result += "Número próximo a " + lastTable.X0;
@@ -166,14 +166,14 @@ namespace FractionedNumber {
             result += "Resultado: " + lastTable.X1;
             return lastTable.X1;
         }
-        private static Number[] calculateNewtonList2(Number[] list) {
-            Number[] list2 = new Number[list.Length - 1];
+        private static FractionedNumber[] calculateNewtonList2(FractionedNumber[] list) {
+            FractionedNumber[] list2 = new FractionedNumber[list.Length - 1];
             for(int i = 1;i < list.Length;i++) {
-                list2[i - 1] = list[i] * new Number(i);
+                list2[i - 1] = list[i] * new FractionedNumber(i);
             }
             return list2;
         }
-        private static NewtonTablePart calculateNewtonEquationTablePart(Number[] list1, Number[] list2, NewtonTablePart lastTable, BigInteger begin, BigInteger end) {
+        private static NewtonTablePart calculateNewtonEquationTablePart(FractionedNumber[] list1, FractionedNumber[] list2, NewtonTablePart lastTable, Number begin, Number end) {
                 NewtonTablePart table = new NewtonTablePart();
             if(lastTable == null) {
                 table.X0 = calculateNewtonEquationMin(list1, begin, end);
@@ -184,38 +184,38 @@ namespace FractionedNumber {
             table.FLX = calculateEquationPart(list2, table.X0);
             table.X1 = table.X0 - (table.FX/table.FLX);
             table.Error = (table.X1 - table.X0) / table.X1;
-            if(table.Error < new Number(0)) {
-                table.Error = table.Error * new Number(-1);
+            if(table.Error < new FractionedNumber(0)) {
+                table.Error = table.Error * new FractionedNumber(-1);
             }
             return table;
         }
-        public static Number calculateNewtonEquationMax(Number[] list, BigInteger begin, BigInteger end) {
-            Number n = new Number(end);
+        public static FractionedNumber calculateNewtonEquationMax(FractionedNumber[] list, Number begin, Number end) {
+            FractionedNumber n = new FractionedNumber(end);
 
-            Number tmp = calculateEquationPart(list, new Number(begin));
+            FractionedNumber tmp = calculateEquationPart(list, new FractionedNumber(begin));
             if(tmp.Numerator == 0) {
-                n = new Number(end);
+                n = new FractionedNumber(end);
             } else if(tmp.Numerator < 0) {
-                for(BigInteger i = begin + 1;i < end;i++) {
-                    Number n2 = calculateEquationPart(list, new Number(i));
+                for(Number i = begin + 1;i < end;i++) {
+                    FractionedNumber n2 = calculateEquationPart(list, new FractionedNumber(i));
                     if(n2.Numerator < 0) {
                     } else if(n2.Numerator == 0) {
-                        n = new Number(i);
+                        n = new FractionedNumber(i);
                         break;
                     } else {
-                        n = new Number(i);
+                        n = new FractionedNumber(i);
                         break;
                     }
                 }
             } else {
-                for(BigInteger i = begin + 1;i < end;i++) {
-                    Number n2 = calculateEquationPart(list, new Number(i));
+                for(Number i = begin + 1;i < end;i++) {
+                    FractionedNumber n2 = calculateEquationPart(list, new FractionedNumber(i));
                     if(n2.Numerator > 0) {
                     } else if(n2.Numerator == 0) {
-                        n = new Number(i);
+                        n = new FractionedNumber(i);
                         break;
                     } else {
-                        n = new Number(i);
+                        n = new FractionedNumber(i);
                         break;
                     }
                 }
@@ -223,38 +223,38 @@ namespace FractionedNumber {
 
             return n;
         }
-        public static Number calculateNewtonEquationMin(Number[] list, BigInteger begin, BigInteger end) {
-            Number n = calculateNewtonEquationMax(list, begin, end);
+        public static FractionedNumber calculateNewtonEquationMin(FractionedNumber[] list, Number begin, Number end) {
+            FractionedNumber n = calculateNewtonEquationMax(list, begin, end);
             n--;
             return n;
         }
 
-        public static Number[] lagrangeInterpolation(Number[] x, Number[] y) {
-            Number[] coefficients = new Number[x.Length];
+        public static FractionedNumber[] lagrangeInterpolation(FractionedNumber[] x, FractionedNumber[] y) {
+            FractionedNumber[] coefficients = new FractionedNumber[x.Length];
             
             int n = x.Length;
-            coefficients = new Number[n];
+            coefficients = new FractionedNumber[n];
             for (int i = 0; i < n; i++) {
-                coefficients[i] = new Number(0);
+                coefficients[i] = new FractionedNumber(0);
             }
 
             // c[] are the coefficients of P(x) = (x-x[0])(x-x[1])...(x-x[n-1])
-            Number[] c = new Number[n + 1];
-            c[0] = new Number(1);
+            FractionedNumber[] c = new FractionedNumber[n + 1];
+            c[0] = new FractionedNumber(1);
             for (int i = 0; i < n; i++) {
                 for (int j = i; j > 0; j--) {
                     c[j] = c[j-1] - c[j] * x[i];
                 }
-                c[0] *= new Number(0)-x[i];
-                c[i + 1] = new Number(1);
+                c[0] *= new FractionedNumber(0)-x[i];
+                c[i + 1] = new FractionedNumber(1);
             }
             /*for(int i = 0;i < c.Length;i++) {
                 System.Console.WriteLine("c[" + i + "] = " + c[i]);
             }*/
-            Number[] tc = new Number[n];
+            FractionedNumber[] tc = new FractionedNumber[n];
             for (int i = 0; i < n; i++) {
                 // d = (x[i]-x[0])...(x[i]-x[i-1])(x[i]-x[i+1])...(x[i]-x[n-1])
-                Number d = new Number(1);
+                FractionedNumber d = new FractionedNumber(1);
                 for (int j = 0; j < n; j++) {
                     if (i != j) {
                         d *= x[i] - x[j];
@@ -264,7 +264,7 @@ namespace FractionedNumber {
                 }
                 System.Console.WriteLine("Fracao "+i+" = " + d);
 
-                Number t = y[i] / d;
+                FractionedNumber t = y[i] / d;
                 // Lagrange polynomial is the sum of n terms, each of which is a
                 // polynomial of degree n-1. tc[] are the coefficients of the i-th
                 // numerator Pi(x) = (x-x[0])...(x-x[i-1])(x-x[i+1])...(x-x[n-1]).
@@ -282,13 +282,13 @@ namespace FractionedNumber {
             return coefficients;
         }
         
-        public static Number permutation(Number[] n, int qt, int ignore) {
-            Number sum = permutationR(n, qt, 0,new Number(0), new Number(1), ignore);
+        public static FractionedNumber permutation(FractionedNumber[] n, int qt, int ignore) {
+            FractionedNumber sum = permutationR(n, qt, 0,new FractionedNumber(0), new FractionedNumber(1), ignore);
             return sum;
             
 
         }
-        private static Number permutationR(Number[] n, int qt, int i, Number sum, Number sumPart, int ignore) {
+        private static FractionedNumber permutationR(FractionedNumber[] n, int qt, int i, FractionedNumber sum, FractionedNumber sumPart, int ignore) {
             for(int j = i;j < n.Length-(qt-i);j++) {
                 sumPart *= permutationR(n, qt-1, j, sum, sumPart, ignore);
             }
@@ -296,16 +296,16 @@ namespace FractionedNumber {
             return sum+sumPart;
         }
         
-        public static Number[] newtonInterpolation(Number[] x, Number[] y) {
-            Number[] a = computeDividedDifference(x, y);
-            Number[] c = new Number[x.Length-1];
+        public static FractionedNumber[] newtonInterpolation(FractionedNumber[] x, FractionedNumber[] y) {
+            FractionedNumber[] a = computeDividedDifference(x, y);
+            FractionedNumber[] c = new FractionedNumber[x.Length-1];
             System.Array.Copy(x, 0, c, 0, c.Length);
             
             int n = c.Length;
 
-            Number[] coefficients = new Number[n + 1];
+            FractionedNumber[] coefficients = new FractionedNumber[n + 1];
             for (int i = 0; i <= n; i++) {
-                coefficients[i] = new Number(0);
+                coefficients[i] = new FractionedNumber(0);
             }
 
             coefficients[0] = a[n];
@@ -317,30 +317,30 @@ namespace FractionedNumber {
             }
             return coefficients;
         }
-        private static Number[] computeDividedDifference(Number[] x, Number[] y){
-            Number[] divdiff = new Number[y.Length];
+        private static FractionedNumber[] computeDividedDifference(FractionedNumber[] x, FractionedNumber[] y){
+            FractionedNumber[] divdiff = new FractionedNumber[y.Length];
             y.CopyTo(divdiff, 0);
             int n = x.Length;
-            Number[] a = new Number [n];
+            FractionedNumber[] a = new FractionedNumber [n];
             a[0] = divdiff[0];
             for (int i = 1; i < n; i++) {
                 for (int j = 0; j < n-i; j++) {
-                    Number denominator = x[j+i] - x[j];
+                    FractionedNumber denominator = x[j+i] - x[j];
                     divdiff[j] = (divdiff[j+1] - divdiff[j]) / denominator;
                 }
                 a[i] = divdiff[0];
             }
             return a;
         }
-        private static void verifyVogel(Number[] demand, Number[] supply, Number[,] matrix){
+        private static void verifyVogel(FractionedNumber[] demand, FractionedNumber[] supply, FractionedNumber[,] matrix){
             if(matrix.GetLength(1) != demand.Length || matrix.GetLength(0) != supply.Length) {
                 string msg = "The demand and supply array doesn't have the same size of the matix\n";
                 msg += "demand["+demand.Length+"], supply["+supply.Length+"], costs["+matrix.GetLength(0)+","+matrix.GetLength(1)+"]";
                 throw new Exception(msg);
             }
 
-            Number sumSupply = SumNumbers(supply);
-            Number sumDemand = SumNumbers(demand);
+            FractionedNumber sumSupply = SumNumbers(supply);
+            FractionedNumber sumDemand = SumNumbers(demand);
             if(sumSupply != sumDemand) {
                 string msg = "The sums of the supply and demand are differents!\n";
                 msg += "Supply sum: " + sumSupply + ", Demand sum: " + sumDemand+"\n";
@@ -349,21 +349,21 @@ namespace FractionedNumber {
                     msg += "demand (row bellow)";
                 else
                     msg += "supply (colum on right)";
-                msg += " with the value " + (Number.Max(sumDemand, sumSupply) - Number.Min(sumDemand, sumSupply));
+                msg += " with the value " + (FractionedNumber.Max(sumDemand, sumSupply) - FractionedNumber.Min(sumDemand, sumSupply));
                 throw new Exception(msg);
             }
 
         }
 
-        private static Number SumNumbers(Number[] array) {
-            Number res = 0;
+        private static FractionedNumber SumNumbers(FractionedNumber[] array) {
+            FractionedNumber res = 0;
             for(int i = 0;i < array.Length;i++) {
                 res += array[i];
             }
             return res;
         }
         
-        private static Number[,] VogelFirstPart(Number[,] costs, Number[] demand, Number[] supply) {
+        private static FractionedNumber[,] VogelFirstPart(FractionedNumber[,] costs, FractionedNumber[] demand, FractionedNumber[] supply) {
             verifyVogel(demand, supply, costs);
             Functions.result += "Matriz de custos de entrada:\n";
             Functions.result += printMatrix(costs);
@@ -376,9 +376,9 @@ namespace FractionedNumber {
                 Functions.result += demand[i] + (i + 1 < demand.Length ? ", " : "");
             }
             Functions.result += "\n----------------------------\n";
-            Number[] demandRemaining = new Number[demand.Length];
-            Number[] supplyRemaining = new Number[supply.Length];
-            Number[,] result = new Number[costs.GetLength(0), costs.GetLength(1)];
+            FractionedNumber[] demandRemaining = new FractionedNumber[demand.Length];
+            FractionedNumber[] supplyRemaining = new FractionedNumber[supply.Length];
+            FractionedNumber[,] result = new FractionedNumber[costs.GetLength(0), costs.GetLength(1)];
             List<VogelPos> taxaDegeneracao = new List<VogelPos>();
 
             Array.Copy(demand, demandRemaining, demand.Length);
@@ -431,8 +431,8 @@ namespace FractionedNumber {
             for(int i = 0;i < taxaDegeneracao.Count;i++) {
                 int l = taxaDegeneracao[i].x;
                 int c = taxaDegeneracao[i].y;
-                Number min = long.MaxValue;
-                Number minSupplyDemand;
+                FractionedNumber min = long.MaxValue;
+                FractionedNumber minSupplyDemand;
                 
                 if(taxaDegeneracao[i].line) {
                     for(int j = 0;j < costs.GetLength(1);j++) {
@@ -455,7 +455,7 @@ namespace FractionedNumber {
                 }
                 if(supply[l] == 0 || demand[c] == 0)
                     continue;
-                minSupplyDemand = Number.Min(supply[l], demand[c]);
+                minSupplyDemand = FractionedNumber.Min(supply[l], demand[c]);
                 supply.SetValue(supply.ElementAt(l) - minSupplyDemand, l);
                 demand.SetValue(demand.ElementAt(c) - minSupplyDemand, c);
                 result[l, c] = minSupplyDemand;
@@ -472,7 +472,7 @@ namespace FractionedNumber {
             for(int i = 0;i < temp.Count;i++) {
                 if(supply[temp[i].x] > 0) {
                     if(demand[temp[i].y] > 0){
-                        Number min = Number.Min(supply[temp[i].x], demand[temp[i].y]);
+                        FractionedNumber min = FractionedNumber.Min(supply[temp[i].x], demand[temp[i].y]);
                             result[temp[i].x, temp[i].y] = min;
                             supply[temp[i].x] -= min;
                             demand[temp[i].y] -= min;
@@ -486,11 +486,11 @@ namespace FractionedNumber {
 
             return result;
         }
-        private static Number[,] CalculateVogelInternalMatrix(Number[,] matrix) {
+        private static FractionedNumber[,] CalculateVogelInternalMatrix(FractionedNumber[,] matrix) {
             return null;
         }
 
-        private static Number[,] VogelSecondPart(Number[,] costs, Number[] demand, Number[] supply, Number[,] matrix) {
+        private static FractionedNumber[,] VogelSecondPart(FractionedNumber[,] costs, FractionedNumber[] demand, FractionedNumber[] supply, FractionedNumber[,] matrix) {
 
             VogelPos min;
             
@@ -498,18 +498,18 @@ namespace FractionedNumber {
 
             do {
                 min = new VogelPos(-1, -1, long.MaxValue, false);
-                Number[,] res = new Number[matrix.GetLength(0), matrix.GetLength(1)];
+                FractionedNumber[,] res = new FractionedNumber[matrix.GetLength(0), matrix.GetLength(1)];
                 bool[,] usedMatrix = GetMatrixInsideVogel(matrix);
                 bool[,] usedMatrix2 = new bool[usedMatrix.GetLength(0), usedMatrix.GetLength(1)];
                 System.Array.Copy(usedMatrix, usedMatrix2, usedMatrix.Length);
-                Number[,] tempMatrix = new Number[matrix.GetLength(0), matrix.GetLength(1)];
+                FractionedNumber[,] tempMatrix = new FractionedNumber[matrix.GetLength(0), matrix.GetLength(1)];
 
                 Functions.result += "=============================\n";
                 Functions.result += "Iteração "+count+"\n";
                 Functions.result += "=============================\n";
 
-                Number[] lines = new Number[matrix.GetLength(0)];
-                Number[] colums = new Number[matrix.GetLength(1)];
+                FractionedNumber[] lines = new FractionedNumber[matrix.GetLength(0)];
+                FractionedNumber[] colums = new FractionedNumber[matrix.GetLength(1)];
 
                 goLine(-1, -1, 0, tempMatrix, costs, usedMatrix2, lines, colums);
 
@@ -605,7 +605,7 @@ namespace FractionedNumber {
                     if(list == null)
                         break;
                     
-                    Number min2 = Number.Min(list[0].number, list[list.Count - 1].number);
+                    FractionedNumber min2 = FractionedNumber.Min(list[0].number, list[list.Count - 1].number);
                     Functions.result += "Minimo: " + min2 + "\n";
                     
                     bool soma = false;
@@ -655,7 +655,7 @@ namespace FractionedNumber {
             return matrix;
         }
 
-        private static List<VogelPos> VogelFindWay(VogelPos destiny, bool[,] usedMatrix, Number[,] matrix) {
+        private static List<VogelPos> VogelFindWay(VogelPos destiny, bool[,] usedMatrix, FractionedNumber[,] matrix) {
             bool[,] usedMatrixTemp = new bool[usedMatrix.GetLength(0),usedMatrix.GetLength(1)];
             Array.Copy(usedMatrix, usedMatrixTemp, usedMatrix.Length);
             List<VogelPos> list = new List<VogelPos>();
@@ -675,7 +675,7 @@ namespace FractionedNumber {
             }
             return null;
         }
-        private static bool VogelFindWayLine(List<VogelPos> list, VogelPos destiny, bool[,] usedMatrix, VogelPos now, Number[,] matrix) {
+        private static bool VogelFindWayLine(List<VogelPos> list, VogelPos destiny, bool[,] usedMatrix, VogelPos now, FractionedNumber[,] matrix) {
             for(int y = 0;y < usedMatrix.GetLength(1);y++) {
                 if(y == destiny.y && usedMatrix[now.x,y]) {
                     VogelPos v = new VogelPos(now.x, y, matrix[now.x, y], true);
@@ -695,7 +695,7 @@ namespace FractionedNumber {
             }
             return false;
         }
-        private static bool VogelFindWayColum(List<VogelPos> list, VogelPos destiny, bool[,] usedMatrix, VogelPos now, Number[,] matrix) {
+        private static bool VogelFindWayColum(List<VogelPos> list, VogelPos destiny, bool[,] usedMatrix, VogelPos now, FractionedNumber[,] matrix) {
             for(int x = 0;x < usedMatrix.GetLength(0);x++) {
                 if(x == destiny.x && usedMatrix[x, now.y]) {
                     return true;
@@ -713,7 +713,7 @@ namespace FractionedNumber {
             return false;
         }
 
-        private static void sumOut(Number[] lines, Number[] colums, bool[,] usedMatrix, Number[,] costs, Number[,] tempMatrix) {
+        private static void sumOut(FractionedNumber[] lines, FractionedNumber[] colums, bool[,] usedMatrix, FractionedNumber[,] costs, FractionedNumber[,] tempMatrix) {
             for(int l = 0;l < tempMatrix.GetLength(0);l++) {
                 for(int c = 0;c < tempMatrix.GetLength(1);c++) {
                     if(!usedMatrix[l, c]) {
@@ -725,7 +725,7 @@ namespace FractionedNumber {
             }
         }
 
-        private static void goLine(int x, int y, Number v, Number[,] m, Number[,] costs, bool[,] usedMatrix, Number[] lines, Number[] colums) {
+        private static void goLine(int x, int y, FractionedNumber v, FractionedNumber[,] m, FractionedNumber[,] costs, bool[,] usedMatrix, FractionedNumber[] lines, FractionedNumber[] colums) {
             if(x == -1 && y == -1) {
                 lines[0] = 0;
             }
@@ -752,7 +752,7 @@ namespace FractionedNumber {
                 }
             }
         }
-        private static void goColum(int x, int y, Number v, Number[,] m, Number[,] costs, bool[,] usedMatrix, Number[] lines, Number[] colums) {
+        private static void goColum(int x, int y, FractionedNumber v, FractionedNumber[,] m, FractionedNumber[,] costs, bool[,] usedMatrix, FractionedNumber[] lines, FractionedNumber[] colums) {
             for(int i = 0;i < m.GetLength(0);i++) {
                 if(i == x)
                     continue;
@@ -766,7 +766,7 @@ namespace FractionedNumber {
             }
         }
 
-        private static bool[,] GetMatrixInsideVogel(Number[,] matrix) {
+        private static bool[,] GetMatrixInsideVogel(FractionedNumber[,] matrix) {
             bool[,] res = new bool[matrix.GetLength(0), matrix.GetLength(1)];
             for (int l = 0; l < matrix.GetLength(0); l++) {
                 for (int c = 0; c < matrix.GetLength(1); c++) {
@@ -778,18 +778,18 @@ namespace FractionedNumber {
             }
             return res;
         }
-        public static Number[,] VogelApproximationMethod(Number[,] costs, Number[] demand, Number[] supply) {
+        public static FractionedNumber[,] VogelApproximationMethod(FractionedNumber[,] costs, FractionedNumber[] demand, FractionedNumber[] supply) {
             clearResult();
-            Number[,] res = VogelFirstPart(costs, demand, supply);
+            FractionedNumber[,] res = VogelFirstPart(costs, demand, supply);
             res = VogelSecondPart(costs, demand, supply, res);
             Functions.result += "\n-------------------\n";
             VogelCalculateTotalCost(res, costs);
             System.Console.WriteLine(Result);
             return res;
         }
-        public static Number[,] VogelApproximationMethod(Number[,] costs, Number[] demand, Number[] supply, string path) {
+        public static FractionedNumber[,] VogelApproximationMethod(FractionedNumber[,] costs, FractionedNumber[] demand, FractionedNumber[] supply, string path) {
             clearResult();
-            Number[,] res = VogelFirstPart(costs, demand, supply);
+            FractionedNumber[,] res = VogelFirstPart(costs, demand, supply);
             res = VogelSecondPart(costs, demand, supply, res);
             Functions.result += "\n-------------------\n";
             VogelCalculateTotalCost(res, costs);
@@ -797,9 +797,9 @@ namespace FractionedNumber {
             System.Console.WriteLine("Output to "+path);
             return res;
         }
-        public static Number[,] NorthWestMethod(Number[,] costs, Number[] demand, Number[] supply, string path) {
+        public static FractionedNumber[,] NorthWestMethod(FractionedNumber[,] costs, FractionedNumber[] demand, FractionedNumber[] supply, string path) {
             clearResult();
-            Number[,] res = NorthWestFirstPart(costs, demand, supply);
+            FractionedNumber[,] res = NorthWestFirstPart(costs, demand, supply);
             res = VogelSecondPart(costs, demand, supply, res);
             Functions.result += "\n-------------------\n";
             VogelCalculateTotalCost(res, costs);
@@ -807,16 +807,16 @@ namespace FractionedNumber {
             System.Console.WriteLine("Output to " + path);
             return res;
         }
-        public static Number[,] NorthWestMethod(Number[,] costs, Number[] demand, Number[] supply) {
+        public static FractionedNumber[,] NorthWestMethod(FractionedNumber[,] costs, FractionedNumber[] demand, FractionedNumber[] supply) {
             clearResult();
-            Number[,] res = NorthWestFirstPart(costs, demand, supply);
+            FractionedNumber[,] res = NorthWestFirstPart(costs, demand, supply);
             res = VogelSecondPart(costs, demand, supply, res);
             Functions.result += "\n-------------------\n";
             VogelCalculateTotalCost(res, costs);
             System.Console.WriteLine(Result);
             return res;
         }
-        private static Number[,] NorthWestFirstPart(Number[,] costs, Number[] demand, Number[] supply) {
+        private static FractionedNumber[,] NorthWestFirstPart(FractionedNumber[,] costs, FractionedNumber[] demand, FractionedNumber[] supply) {
             verifyVogel(demand, supply, costs);
             Functions.result += "Matriz de custos de entrada:\n";
             Functions.result += printMatrix(costs);
@@ -830,9 +830,9 @@ namespace FractionedNumber {
             }
             Functions.result += "\n----------------------------\n";
 
-            Number[] demandRemaining = new Number[demand.Length];
-            Number[] supplyRemaining = new Number[supply.Length];
-            Number[,] result = new Number[costs.GetLength(0), costs.GetLength(1)];
+            FractionedNumber[] demandRemaining = new FractionedNumber[demand.Length];
+            FractionedNumber[] supplyRemaining = new FractionedNumber[supply.Length];
+            FractionedNumber[,] result = new FractionedNumber[costs.GetLength(0), costs.GetLength(1)];
 
             Array.Copy(demand, demandRemaining, demand.Length);
             Array.Copy(supply, supplyRemaining, supply.Length);
@@ -840,7 +840,7 @@ namespace FractionedNumber {
             int posL = 0;
             int posC = 0;
             while(demandRemaining[posC]!=0 && supplyRemaining[posL]!=0) {
-                Number min = Number.Min(demandRemaining[posC], supplyRemaining[posL]);
+                FractionedNumber min = FractionedNumber.Min(demandRemaining[posC], supplyRemaining[posL]);
                 result[posL, posC] = min;
                 demandRemaining[posC] -= min;
                 supplyRemaining[posL] -= min;
@@ -860,12 +860,12 @@ namespace FractionedNumber {
             return result;
 
         }
-        public static Number[,] VogelInverseMatrix(Number[,] matrix) {
-            Number max = long.MinValue;
-            Number[,] newMatrix = new Number[matrix.GetLength(0), matrix.GetLength(1)];
+        public static FractionedNumber[,] VogelInverseMatrix(FractionedNumber[,] matrix) {
+            FractionedNumber max = long.MinValue;
+            FractionedNumber[,] newMatrix = new FractionedNumber[matrix.GetLength(0), matrix.GetLength(1)];
             for(int l = 0;l < matrix.GetLength(0);l++) {
                 for(int c = 0;c < matrix.GetLength(1);c++) {
-                    max = Number.Max(max, matrix[l, c]);
+                    max = FractionedNumber.Max(max, matrix[l, c]);
                 }
             }
             for(int l = 0;l < matrix.GetLength(0);l++) {
@@ -876,9 +876,9 @@ namespace FractionedNumber {
             return newMatrix;
         }
         
-        private static Number VogelCalculateTotalCost(Number[,] matrix, Number[,] costs) {
+        private static FractionedNumber VogelCalculateTotalCost(FractionedNumber[,] matrix, FractionedNumber[,] costs) {
             result += "Total cost: ";
-            Number sum = 0;
+            FractionedNumber sum = 0;
             for(int l = 0;l < matrix.GetLength(0);l++) {
                 for(int c = 0;c < matrix.GetLength(1);c++) {
                     sum += matrix[l, c] * costs[l, c];
@@ -888,7 +888,7 @@ namespace FractionedNumber {
             result += "\n";
             return sum;
         }
-        private static string printMatrix(Number[,] m) {
+        private static string printMatrix(FractionedNumber[,] m) {
             string s = "";
             for(int l = 0;l < m.GetLength(0);l++) {
                 for(int c = 0;c < m.GetLength(1);c++) {
@@ -901,18 +901,18 @@ namespace FractionedNumber {
     }
 
     class Function {
-        public Function(Number[] l) {
+        public Function(FractionedNumber[] l) {
             list = l;
         }
-        private Number[] list;
-        public Number[] List{
+        private FractionedNumber[] list;
+        public FractionedNumber[] List{
             get { return list; }
             set { list = value; }
         }
         public static Function operator *(Function n1, Function n2) {
-            Number[] res = new Number[n1.list.Length + n2.list.Length];
+            FractionedNumber[] res = new FractionedNumber[n1.list.Length + n2.list.Length];
             for(int i = 0;i < res.Length;i++) {
-                res[i] = new Number(0);
+                res[i] = new FractionedNumber(0);
             }
             for(int i = 0;i < n1.list.Length;i++) {
                 for(int j = 0;j < n2.list.Length;j++) {
@@ -922,9 +922,9 @@ namespace FractionedNumber {
             return new Function(res);
         }
         public static Function operator /(Function n1, Function n2) {
-            Number[] res = new Number[n1.list.Length + n2.list.Length];
+            FractionedNumber[] res = new FractionedNumber[n1.list.Length + n2.list.Length];
             for(int i = 0;i < res.Length;i++) {
-                res[i] = new Number(0);
+                res[i] = new FractionedNumber(0);
             }
             for(int i = 0;i < n1.list.Length;i++) {
                 for(int j = 0;j < n2.list.Length;j++) {
@@ -938,13 +938,13 @@ namespace FractionedNumber {
             return new Function(res);
         }
         public static Function operator +(Function n1, Function n2) {
-            Number[] res;
+            FractionedNumber[] res;
             if(n1.List.Length> n2.List.Length)
-                res = new Number[n1.list.Length];
+                res = new FractionedNumber[n1.list.Length];
             else
-                res = new Number[n2.list.Length];
+                res = new FractionedNumber[n2.list.Length];
             for(int i = 0;i < res.Length;i++) {
-                res[i] = new Number(0);
+                res[i] = new FractionedNumber(0);
             }
             for(int i = 0;i < res.Length;i++) {
                 if(n2.list.Length>i)
@@ -953,13 +953,13 @@ namespace FractionedNumber {
             return new Function(res);
         }
         public static Function operator -(Function n1, Function n2) {
-            Number[] res;
+            FractionedNumber[] res;
             if(n1.List.Length > n2.List.Length)
-                res = new Number[n1.list.Length];
+                res = new FractionedNumber[n1.list.Length];
             else
-                res = new Number[n2.list.Length];
+                res = new FractionedNumber[n2.list.Length];
             for(int i = 0;i < res.Length;i++) {
-                res[i] = new Number(0);
+                res[i] = new FractionedNumber(0);
             }
             for(int i = 0;i < res.Length;i++) {
                 if(n2.list.Length > i)
@@ -970,7 +970,7 @@ namespace FractionedNumber {
         public override String ToString() {
             string res = "";
             for(int i = 0;i < list.Length;i++) {
-                if(list[i] != new Number(0))
+                if(list[i] != new FractionedNumber(0))
                 res += "("+list[i]+")x^"+i+" ";
             }
             return res;
@@ -978,25 +978,25 @@ namespace FractionedNumber {
     }
 
     class BisectInterval {
-        private Number begin = new Number(0);
-        private Number end = new Number(1);
-        private Number average = new Number(1, 2);
-        public Number Begin {
+        private FractionedNumber begin = new FractionedNumber(0);
+        private FractionedNumber end = new FractionedNumber(1);
+        private FractionedNumber average = new FractionedNumber(1, 2);
+        public FractionedNumber Begin {
             set { begin = value; }
             get { return begin; }
         }
-        public Number End {
+        public FractionedNumber End {
             set { end = value; }
             get { return end; }
         }
-        public Number Average {
+        public FractionedNumber Average {
             set { average = value; }
             get { return average; }
         }
-        public Number DoAverage() {
-            BigInteger num = begin.Numerator * end.Denominator + end.Numerator * begin.Denominator;
-            BigInteger den = begin.Denominator * end.Denominator * 2;
-            Average = Number.simplify(new Number(num, den));
+        public FractionedNumber DoAverage() {
+            Number num = begin.Numerator * end.Denominator + end.Numerator * begin.Denominator;
+            Number den = begin.Denominator * end.Denominator * 2;
+            Average = FractionedNumber.simplify(new FractionedNumber(num, den));
             return Average;
         }
         
@@ -1006,7 +1006,7 @@ namespace FractionedNumber {
     class BisectTablePart {
         private BisectInterval interval = new BisectInterval();
         private BisectInterval resInterval = new BisectInterval();
-        private Number error = new Number(1);
+        private FractionedNumber error = new FractionedNumber(1);
 
         public BisectInterval BisectInterval {
             set { interval = value; }
@@ -1016,7 +1016,7 @@ namespace FractionedNumber {
             set { resInterval = value; }
             get { return resInterval; }
         }
-        public Number Error {
+        public FractionedNumber Error {
             set { error = value; }
             get { return error; }
         }
@@ -1033,29 +1033,29 @@ namespace FractionedNumber {
         }
     }
     class NewtonTablePart {
-        private Number x0 = new Number(0);
-        private Number x1 = new Number(0);
-        private Number fx = new Number(0);
-        private Number flx = new Number(0);
-        private Number error = new Number(1);
+        private FractionedNumber x0 = new FractionedNumber(0);
+        private FractionedNumber x1 = new FractionedNumber(0);
+        private FractionedNumber fx = new FractionedNumber(0);
+        private FractionedNumber flx = new FractionedNumber(0);
+        private FractionedNumber error = new FractionedNumber(1);
 
-        public Number X0 {
+        public FractionedNumber X0 {
             get { return x0; }
             set { x0 = value; }
         }
-        public Number X1 {
+        public FractionedNumber X1 {
             get { return x1; }
             set { x1 = value; }
         }
-        public Number FX {
+        public FractionedNumber FX {
             get { return fx; }
             set { fx = value; }
         }
-        public Number FLX {
+        public FractionedNumber FLX {
             get { return flx; }
             set { flx = value; }
         }
-        public Number Error {
+        public FractionedNumber Error {
             get { return error; }
             set { error = value; }
         }
@@ -1075,8 +1075,8 @@ namespace FractionedNumber {
         public int y;
         public bool line;
 
-        public Number number;
-        public VogelPos(int x, int y, Number number, bool line) {
+        public FractionedNumber number;
+        public VogelPos(int x, int y, FractionedNumber number, bool line) {
             this.x = x;
             this.y = y;
             this.number = number;
